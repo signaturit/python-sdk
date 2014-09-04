@@ -1,0 +1,10 @@
+setup.py
+signaturit_sdk/__init__.py
+signaturit_sdk/signaturit_client.py
+signaturit_sdk/resources/__init__.py
+signaturit_sdk/resources/connection.py
+signaturit_sdk/resources/parser.py
+signaturit_sdk/tests/__init__.py
+signaturit_sdk/tests/account_tests.py
+signaturit_sdk/tests/branding_tests.py
+signaturit_sdk/tests/signature_tests.py
