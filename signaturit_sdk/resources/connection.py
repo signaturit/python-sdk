@@ -36,7 +36,7 @@ class Connection:
             self.__base_url,
             headers=self.__headers)
 
-        return response.text
+        return json.loads(response.text)
 
     def post_request(self):
         response = requests.post(
@@ -45,7 +45,7 @@ class Connection:
             files=self.__files,
             data=self.__params)
 
-        return response.text
+        return json.loads(response.text)
 
     def put_request(self):
         raw = self.__files['files'].read()
@@ -55,7 +55,7 @@ class Connection:
             headers=self.__headers,
             data=raw)
 
-        return response.text
+        return json.loads(response.text)
 
     def patch_request(self):
         response = requests.patch(
@@ -63,7 +63,7 @@ class Connection:
             headers=self.__headers,
             data=json.dumps(self.__params))
 
-        return response.text
+        return json.loads(response.text)
 
     def file_request(self):
         """
