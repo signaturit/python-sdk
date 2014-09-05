@@ -19,7 +19,7 @@ class SignatureTest(unittest.TestCase):
         open(self.TEST_FILE_URL, 'a').close()
 
         sign_params = {'subject': 'Receipt number 215',
-                       'in_person': 1,
+                       'in_person_sign': 1,
                        'mandatory_photo': 1,
                        'sequential': 1,
                        'body': 'Please, can you sign this receipt? Just click the button!',
@@ -37,7 +37,7 @@ class SignatureTest(unittest.TestCase):
                            'sequential': '1',
                            'recipients[0][email]': 'pau.soler@signatur.it',
                            'recipients[0][fullname]': 'Pau',
-                           'in_person': '1',
+                           'in_person_sign': '1',
                            'subject': 'Receipt number 215'}
 
         parsed_data, files = parser.parse_data(sign_params)

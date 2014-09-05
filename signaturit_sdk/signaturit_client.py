@@ -9,7 +9,7 @@ class SignaturitClient:
     BRANDINGS_LOGO_URL = '/v2/brandings/%s/%s.json'
     BRANDINGS_TEMPLATES_URL = '/v2/brandings/%s/%s/%s.json'
 
-    CREATE_SIGN_PARAMS = ['subject', 'body', 'recipients', 'files', 'in_person', 'sequential', 'mandatory_pages',
+    CREATE_SIGN_PARAMS = ['subject', 'body', 'recipients', 'files', 'in_person_sign', 'sequential', 'mandatory_pages',
                           'mandatory_photo', 'branding_id', 'templates']
 
     STORAGE_S3 = ['bucket, key, secret']
@@ -224,7 +224,7 @@ class SignaturitClient:
         @params: An array of params
             - subject: Subject of the email (optional)
             - body: Body of the email (optional)
-            - in_person: If you want to do an in person sign (system will not send an email to the user, but return the
+            - in_person_sign: If you want to do an in person sign (system will not send an email to the user, but return the
                          sign url instead) (optional)
             - sequential: If you want to do a sequential sign (for multiple recipients, the sign goes in sequential way)
                           (optional)
