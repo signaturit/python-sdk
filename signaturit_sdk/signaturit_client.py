@@ -3,6 +3,7 @@ from resources.parser import Parser
 
 class SignaturitClient:
     ACCOUNT_URL = '/v2/account.json'
+    ACCOUNT_STORAGE_URL = '/v2/account/storage.json'
 
     BRANDINGS_URL = '/v2/brandings.json'
     BRANDINGS_ID_URL = '/v2/brandings/%s.json'
@@ -101,10 +102,20 @@ class SignaturitClient:
 
         connection = Connection(self.token)
         connection.add_header('Content-Type', 'application/json')
-        connection.set_url(self.production, self.ACCOUNT_URL)
-        connection.add_params(params)
+        connection.set_url(self.production, self.ACCOUNT_STORAGE_URL)
+        connection.add_params(params, json_format=True)
 
-        return connection.patch_request()
+        return connection.post_request()
+
+    def revert_to_default_document_storage(self):
+        """
+        Revert to signaturit's default document storage
+        @return Account data
+        """
+        connection = Connection(self.token)
+        connection.set_url(self.production, self.ACCOUNT_STORAGE_URL)
+
+        return connection.delete_request()
 
     def get_signature(self, signature_id):
         """

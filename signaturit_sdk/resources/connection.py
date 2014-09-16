@@ -57,6 +57,13 @@ class Connection:
 
         return json.loads(response.text)
 
+    def delete_request(self):
+        response = requests.delete(
+            self.__base_url,
+            headers=self.__headers)
+
+        return json.loads(response.text)
+
     def patch_request(self):
         response = requests.patch(
             self.__base_url,

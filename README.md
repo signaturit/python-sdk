@@ -169,6 +169,14 @@ credentials = {
 response = client.set_document_storage(sftp, credentials)
 ```
 
+### Revert to default document storage
+
+If you ever want to store your files in Signaturit's servers just run this method:
+
+```python
+client.revert_to_default_document_storage()
+```
+
 ## Branding
 
 ### Get brandings
