@@ -127,6 +127,14 @@ file_path = []
 response = client.create_signature_request(file_path, recipients, sign_params)
 ```
 
+### Cancel signature request
+
+Cancel a signature request.
+
+```python
+response = client.cancel_signature_request('SIGNATURE_ID');
+```
+
 ### Get audit trail
 
 Get the audit trail of a signature request document and save it in the submitted path.

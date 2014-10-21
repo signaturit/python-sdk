@@ -48,6 +48,19 @@ class SignatureTest(unittest.TestCase):
         os.unlink(self.TEST_FILE_URL)
 
     @httpretty.activate
+    def test_cancel_signature_request(self):
+        httpretty.register_uri(httpretty.PATCH, "http://api.sandbox.signaturit.com/v2/signs/SIGN_ID/cancel.json",
+                               body='{"id": "SIGN_ID", "recipients": [{"email": "test@test.com", "fullname": "Mr Test"}], "subject": "Testing"}',
+                               content_type="application/json")
+
+        signaturit_client = SignaturitClient('SOME_TOKEN')
+
+        response = signaturit_client.cancel_signature_request('SIGN_ID')
+
+        # self.assertEqual('Testing', response['subject'])
+        # self.assertEqual([{"email": "test@test.com", "fullname": "Mr Test"}], response['recipients'])
+
+    @httpretty.activate
     def test_get_signatures(self):
         httpretty.register_uri(httpretty.GET, "http://api.sandbox.signaturit.com/v2/signs.json",
                                body='{"recipients": [{"email": "test@test.com", "fullname": "Mr Test"}],"subject": "Testing"}',
@@ -55,7 +68,7 @@ class SignatureTest(unittest.TestCase):
 
         signaturit_client = SignaturitClient('SOME_TOKEN')
 
-        response = json.loads(signaturit_client.get_signatures())
+        response = signaturit_client.get_signatures()
 
         self.assertEqual('Testing', response['subject'])
         self.assertEqual([{"email": "test@test.com", "fullname": "Mr Test"}], response['recipients'])
@@ -70,7 +83,7 @@ class SignatureTest(unittest.TestCase):
 
         response = signaturit_client.count_signatures()
 
-        self.assertEqual('3', response)
+        self.assertEqual(3, response)
 
     @httpretty.activate
     def test_get_signature(self):
@@ -82,7 +95,7 @@ class SignatureTest(unittest.TestCase):
 
         signaturit_client = SignaturitClient('SOME_TOKEN')
 
-        response = json.loads(signaturit_client.get_signature('SIGN_ID'))
+        response = signaturit_client.get_signature('SIGN_ID')
 
         self.assertEqual('Testing', response['subject'])
         self.assertEqual('SIGN_ID', response['id'])
@@ -99,7 +112,7 @@ class SignatureTest(unittest.TestCase):
 
         signaturit_client = SignaturitClient('SOME_CLIENT')
 
-        response = json.loads(signaturit_client.create_signature_request([self.TEST_FILE_URL], [{"email": "test@test.com", "fullname": "Mr Test"}], {}))
+        response = signaturit_client.create_signature_request([self.TEST_FILE_URL], [{"email": "test@test.com", "fullname": "Mr Test"}], {})
 
         self.assertEqual('Testing', response['subject'])
         self.assertEqual('SIGN_ID', response['id'])

@@ -25,6 +25,7 @@ class SignaturitClient:
     PRODUCTION = True
 
     SIGNS_URL = '/v2/signs.json'
+    SIGNS_CANCEL_URL = '/v2/signs/%s/cancel.json'
     SIGNS_COUNT_URL = '/v2/signs/count.json'
     SIGNS_ID_URL = '/v2/signs/%s.json'
     SIGNS_DOCUMENTS_URL = '/v2/signs/%s/documents.json'
@@ -257,6 +258,19 @@ class SignaturitClient:
         connection.add_files(files)
 
         return connection.post_request()
+
+    def cancel_signature_request(self, signature_id):
+        """
+        Cancel a concrete Signature
+        @signature_id: Id of signature
+        @return Signature data
+        """
+
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.SIGNS_CANCEL_URL % signature_id)
+
+        return connection.patch_request()
 
     def get_branding(self, branding_id):
         """
