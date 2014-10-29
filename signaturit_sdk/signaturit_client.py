@@ -1,6 +1,7 @@
 from resources.connection import Connection
 from resources.parser import Parser
 
+
 class SignaturitClient:
     ACCOUNT_URL = '/v2/account.json'
     ACCOUNT_STORAGE_URL = '/v2/account/storage.json'
@@ -11,7 +12,7 @@ class SignaturitClient:
     BRANDINGS_TEMPLATES_URL = '/v2/brandings/%s/%s/%s.json'
 
     CREATE_SIGN_PARAMS = ['subject', 'body', 'recipients', 'files', 'in_person_sign', 'sequential', 'mandatory_pages',
-                          'mandatory_photo', 'branding_id', 'templates']
+                          'mandatory_photo', 'mandatory_voice', 'branding_id', 'templates']
 
     STORAGE_S3 = ['bucket, key, secret']
 
@@ -223,7 +224,7 @@ class SignaturitClient:
         """
         Create a new Signature request.
         @files
-            Filse to send
+            Files to send
                 ex: ['/documents/internet_contract.pdf', ... ]
         @recipients
             A dictionary with the email and fullname of the person you want to sign.
@@ -240,11 +241,15 @@ class SignaturitClient:
                          sign url instead) (optional)
             - sequential: If you want to do a sequential sign (for multiple recipients, the sign goes in sequential way)
                           (optional)
-            - mandatory_photo: If a photo is required in sign process (optional)
-            - mandatory_pages: A list of pages the signer must sign (optional)
-                ex: [1, 2, 5]
+            - mandatory_photo: A list of booleans that tell if photo capture will be asked to finish the signature process. (optional)
+            The index of array references the document number, so first value will apply to first document.
+            - mandatory_voice: A list of booleans that tell if audio recording will be asked to finish the signature process. (optional)
+            The index of array references the document number, so first value will apply to first document.
+            - mandatory_pages: A list of list of pages the signer must sign (optional)
+            The index of array references the document number, so first value will apply to first document.
+                ex: [[1, 2, 5], [1]]
             - branding_id: The id of the branding you want to use. If no branding_id, system use the account default
-                           branding.
+                           branding. (optional)
         """
         params['files'] = files
         params['recipients'] = recipients
