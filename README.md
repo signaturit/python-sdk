@@ -135,6 +135,14 @@ Cancel a signature request.
 response = client.cancel_signature_request('SIGNATURE_ID');
 ```
 
+### Send reminder
+
+Send a reminder email.
+
+```python
+response = client.send_reminder('SIGNATURE_ID', 'DOCUMENT_ID');
+```
+
 ### Get audit trail
 
 Get the audit trail of a signature request document and save it in the submitted path.
@@ -240,4 +248,12 @@ Change a template. Learn more about the templates [here](http://docs.signaturit.
 ```python
 file_path = '/path/new_template.html'
 response = client.update_branding_template('BRANDING_ID', 'sign_request', file_path)
+```
+
+### Get templates
+
+Retrieve all data from your templates.
+
+```python
+response = client.get_templates()
 ```

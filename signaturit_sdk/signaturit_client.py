@@ -33,6 +33,7 @@ class SignaturitClient:
     SIGNS_DOCUMENTS_ID_URL = '/v2/signs/%s/documents/%s.json'
     SIGNS_DOCUMENTS_AUDIT_URL = '/v2/signs/%s/documents/%s/download/doc_proof'
     SIGNS_DOCUMENTS_SIGNED_URL = '/v2/signs/%s/documents/%s/download/signed'
+    SIGNS_SEND_REMINDER_URL = '/v2/signs/%s/documents/%s/reminder.json'
 
     TEMPLATES_URL = '/v2/templates.json'
 
@@ -270,12 +271,23 @@ class SignaturitClient:
         @signature_id: Id of signature
         @return Signature data
         """
-
         connection = Connection(self.token)
 
         connection.set_url(self.production, self.SIGNS_CANCEL_URL % signature_id)
 
         return connection.patch_request()
+
+    def send_reminder(self, signature_id, document_id):
+        """
+        Send a reminder email
+        @signature_id: Id of signature
+        @document_id: Id of document
+        """
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.SIGNS_SEND_REMINDER_URL % (signature_id, document_id))
+
+        return connection.post_request()
 
     def get_branding(self, branding_id):
         """

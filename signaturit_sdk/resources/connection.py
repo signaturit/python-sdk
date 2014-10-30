@@ -10,7 +10,7 @@ class Connection:
         self.__base_url = None
         self.__params = None
         self.__files = None
-        self.__headers = {'Authorization': 'Bearer %s' % token, 'user-agent': 'python-sdk-0.0.4'}
+        self.__headers = {'Authorization': 'Bearer %s' % token, 'user-agent': 'signaturit-python-sdk 0.0.4'}
 
     def add_header(self, header, value):
         self.__headers[header] = value

@@ -57,8 +57,18 @@ class SignatureTest(unittest.TestCase):
 
         response = signaturit_client.cancel_signature_request('SIGN_ID')
 
-        # self.assertEqual('Testing', response['subject'])
-        # self.assertEqual([{"email": "test@test.com", "fullname": "Mr Test"}], response['recipients'])
+        self.assertEqual('Testing', response['subject'])
+        self.assertEqual([{"email": "test@test.com", "fullname": "Mr Test"}], response['recipients'])
+
+    @httpretty.activate
+    def test_send_reminder(selfself):
+        httpretty.register_uri(httpretty.POST, "http://api.sandbox.signaturit.com/v2/signs/SIGN_ID/documents/JOB_ID/reminder.json",
+                               body='{}',
+                               content_type="application/json")
+
+        signaturit_client = SignaturitClient('SOME_TOKEN')
+
+        signaturit_client.send_reminder('SIGN_ID', 'JOB_ID')
 
     @httpretty.activate
     def test_get_signatures(self):
