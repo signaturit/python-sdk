@@ -67,6 +67,12 @@ response = client.get_signatures(status=3)
 response = client.get_signatures(since='2014-7-20', status=3)
 ```
 
+##### Getting signatures with custom field "crm_id"
+
+```python
+response = client.get_signatures(data={'crm_id': 'CUSTOM_ID'})
+```
+
 ### Count signature requests
 
 Count your signature requests.
@@ -124,6 +130,15 @@ And if you have some templates created, you can use them too.
 recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
 sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', 'templates': ['id1',...]}
 file_path = []
+response = client.create_signature_request(file_path, recipients, sign_params)
+```
+
+You can add custom info in your requests
+
+```python
+recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
+sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', 'data': {'crm_id': '45673'}}
+file_path = '/documents/contracts/125932_important.pdf'
 response = client.create_signature_request(file_path, recipients, sign_params)
 ```
 

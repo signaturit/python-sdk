@@ -12,7 +12,8 @@ class SignaturitClient:
     BRANDINGS_TEMPLATES_URL = '/v2/brandings/%s/%s/%s.json'
 
     CREATE_SIGN_PARAMS = ['subject', 'body', 'recipients', 'files', 'in_person_sign', 'sequential', 'mandatory_pages',
-                          'mandatory_photo', 'mandatory_voice', 'branding_id', 'templates']
+                          'mandatory_photo', 'mandatory_voice', 'branding_id', 'templates', 'method', 'sms_auth',
+                          'data']
 
     STORAGE_S3 = ['bucket, key, secret']
 
@@ -37,7 +38,8 @@ class SignaturitClient:
 
     TEMPLATES_URL = '/v2/templates.json'
 
-    TOUCH_BRANDING_PARAMS = ['files', 'primary', 'events_url', 'subject_tag', 'corporate_layout_color', 'corporate_text_color',
+    TOUCH_BRANDING_PARAMS = ['files', 'primary', 'events_url', 'subject_tag', 'corporate_layout_color',
+                             'corporate_text_color',
                              'application_texts', 'reminders', 'expire_time', 'callback_url', 'signature_pos_x',
                              'signature_pos_y', 'terms_and_conditions_label', 'terms_and_conditions_text']
 
@@ -130,7 +132,7 @@ class SignaturitClient:
 
         return connection.get_request()
 
-    def get_signatures(self, limit=100, offset=0, status=None, since=None):
+    def get_signatures(self, limit=100, offset=0, status=None, since=None, data=None):
         """
         Get all signatures
         """
@@ -140,22 +142,28 @@ class SignaturitClient:
             url += '&status=%s' % status
         if since is not None:
             url += '&since=%s' % since
+        if data is not None and isinstance(data, dict):
+            for data_key, data_value in data.items():
+                url += '&data.%s=%s' % (data_key, data_value)
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
 
         return connection.get_request()
 
-    def count_signatures(self, status=None, since=None):
+    def count_signatures(self, status=None, since=None, data=None):
         """
         Count all signatures
         """
-        url = self.SIGNS_COUNT_URL
+        url = self.SIGNS_COUNT_URL + '?'
 
         if status is not None:
             url += '&status=%s' % status
         if since is not None:
             url += '&since=%s' % since
+        if data is not None and isinstance(data, dict):
+            for data_key, data_value in data.items():
+                url += '&data.%s=%s' % (data_key, data_value)
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
