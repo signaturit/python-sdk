@@ -1,6 +1,3 @@
-.vagrant/
 .DS_Store
 dist
-Vagrantfile
-vagrant.sh
 *.pyc
