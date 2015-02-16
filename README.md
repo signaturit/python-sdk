@@ -138,7 +138,7 @@ You can send templates with the fields filled
 
 ```python
 recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
-sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', templates: {'TEMPLATE_ID'}, data': {'WIDGET_ID': 'DEFAULT_VALUE'}}
+sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', 'templates': {'TEMPLATE_ID'}, 'data': {'WIDGET_ID': 'DEFAULT_VALUE'}}
 
 response = client.create_signature_request({}, recipients, sign_params)
 ```
