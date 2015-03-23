@@ -15,7 +15,7 @@ class SignaturitClient:
                           'mandatory_photo', 'mandatory_voice', 'branding_id', 'templates', 'method', 'sms_auth',
                           'data']
 
-    STORAGE_S3 = ['bucket, key, secret']
+    STORAGE_S3 = ['bucket', 'key', 'secret']
 
     STORAGE_SFTP_PASSWORD = ['password']
     STORAGE_SFTP_KEY = ['passphrase', 'public', 'private']
