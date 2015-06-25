@@ -13,7 +13,7 @@ class SignaturitClient:
 
     CREATE_SIGN_PARAMS = ['subject', 'body', 'recipients', 'files', 'in_person_sign', 'sequential', 'mandatory_pages',
                           'mandatory_photo', 'mandatory_voice', 'branding_id', 'templates', 'method', 'sms_auth',
-                          'data']
+                          'data', 'signature_pos_x', 'signature_pos_y']
 
     STORAGE_S3 = ['bucket', 'key', 'secret']
 
@@ -132,7 +132,7 @@ class SignaturitClient:
 
         return connection.get_request()
 
-    def get_signatures(self, limit=100, offset=0, status=None, since=None, data=None):
+    def get_signatures(self, limit=100, offset=0, status=None, since=None, data=None, ids=None):
         """
         Get all signatures
         """
@@ -140,18 +140,24 @@ class SignaturitClient:
 
         if status is not None:
             url += '&status=%s' % status
+
         if since is not None:
             url += '&since=%s' % since
+
         if data is not None and isinstance(data, dict):
             for data_key, data_value in data.items():
                 url += '&data.%s=%s' % (data_key, data_value)
+
+        if ids is not None:
+            ids = ",".join(ids)
+            url += '&id=%s' % ids
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
 
         return connection.get_request()
 
-    def count_signatures(self, status=None, since=None, data=None):
+    def count_signatures(self, status=None, since=None, data=None, ids=None):
         """
         Count all signatures
         """
@@ -159,11 +165,17 @@ class SignaturitClient:
 
         if status is not None:
             url += '&status=%s' % status
+
         if since is not None:
             url += '&since=%s' % since
+
         if data is not None and isinstance(data, dict):
             for data_key, data_value in data.items():
                 url += '&data.%s=%s' % (data_key, data_value)
+
+        if ids is not None:
+            ids = ",".join(ids)
+            url += '&id=%s' % ids
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
