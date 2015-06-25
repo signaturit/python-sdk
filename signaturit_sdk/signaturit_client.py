@@ -150,7 +150,7 @@ class SignaturitClient:
 
         if ids is not None:
             ids = ",".join(ids)
-            url += '&id=%s' % ids
+            url += '&ids=%s' % ids
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
@@ -175,7 +175,7 @@ class SignaturitClient:
 
         if ids is not None:
             ids = ",".join(ids)
-            url += '&id=%s' % ids
+            url += '&ids=%s' % ids
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
