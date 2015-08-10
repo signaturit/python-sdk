@@ -84,16 +84,14 @@ class SignaturitClient:
         url = self.SIGNS_URL + "?limit=%s&offset=%s" % (limit, offset)
 
         for key, value in conditions.items():
-            if key is 'ids':
-                ids = ",".join(value)
-                url += '&ids=%s' % ids
-                continue
-
             if key is 'data':
                 for data_key, data_value in value.items():
-                    url += '&data.%s=%s' % (data_key, data_value)
+                    url += '&data[%s]=%s' % (data_key, data_value)
 
                 continue
+
+            if key is 'ids':
+                value = ",".join(value)
 
             url += '&%s=%s' % (key, value)
 
@@ -109,16 +107,14 @@ class SignaturitClient:
         url = self.SIGNS_COUNT_URL + '?'
 
         for key, value in conditions.items():
-            if key is 'ids':
-                ids = ",".join(value)
-                url += '&ids=%s' % ids
-                continue
-
             if key is 'data':
                 for data_key, data_value in value.items():
-                    url += '&data.%s=%s' % (data_key, data_value)
+                    url += '&data[%s]=%s' % (data_key, data_value)
 
                 continue
+
+            if key is 'ids':
+                value = ",".join(value)
 
             url += '&%s=%s' % (key, value)
 
@@ -388,11 +384,13 @@ class SignaturitClient:
         """
         url = self.EMAILS_URL + "?limit=%s&offset=%s" % (limit, offset)
 
-        connection = Connection(self.token)
-
         for key, value in conditions.items():
-            url += "&%s=%s" % (key, value)
+            if key is 'ids':
+                value = ",".join(value)
 
+            url += '&%s=%s' % (key, value)
+
+        connection = Connection(self.token)
         connection.set_url(self.production, url)
 
         return connection.get_request()
@@ -403,11 +401,14 @@ class SignaturitClient:
         """
         url = self.EMAILS_COUNT_URL + "?"
 
-        connection = Connection(self.token)
-
         for key, value in conditions.items():
-            url += "&%s=%s" % (key, value)
+            if key is 'ids':
+                value = ",".join(value)
 
+            url += '&%s=%s' % (key, value)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
         connection.set_url(self.production, url)
 
         return connection.get_request()

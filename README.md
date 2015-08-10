@@ -302,7 +302,7 @@ Get a single email
 
 ```python
 client.get_email('EMAIL_ID')
-``
+```
 
 ### Get email certificates
 
@@ -310,15 +310,15 @@ Get a single email certificates
 
 ```python
 client.get_email_certificates('EMAIL_ID')
-``
+```
 
-### Get email
+### Get email certificate
 
 Get a single email certificate
 
 ```python
 client.get_email('EMAIL_ID', 'CERTIFICATE_ID')
-``
+```
 
 ### Create email
 
@@ -330,7 +330,7 @@ response = client.create_email(
     [{'email': 'john.doe@signaturit.com', 'fullname': 'Mr John'}],
     'Python subject',
     'Python body',
-    []
+    {}
 )
 ```
 
