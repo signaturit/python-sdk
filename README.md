@@ -58,20 +58,25 @@ response = client.get_signatures(limit=50, offset=50)
 ##### Getting only the finished signatures 
 
 ```python
-response = client.get_signatures(status=3)
+response = client.get_signatures(conditions={'status': 3})
 ```
 
 ##### Getting the finished signatures created since July 20th of 2014
 
 ```python
-response = client.get_signatures(since='2014-7-20', status=3)
+response = client.get_signatures(conditions={'since': '2014-7-20', 'status': 3})
 ```
 
 ##### Getting signatures with custom field "crm_id"
 
 ```python
-response = client.get_signatures(data={'crm_id': 'CUSTOM_ID'})
+response = client.get_signatures(conditions={'data': {'crm_id': 'CUSTOM_ID'}})
 ```
+##### Getting signatures inside a set of ids
+
+```python
+response = client.get_signatures(conditions={'ids': ['ID1', 'ID2]})
+``
 
 ### Count signature requests
 
@@ -113,7 +118,7 @@ Create a new signature request. Check all [params](http://docs.signaturit.com/ap
 recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
 sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?'}
 file_path = '/documents/contracts/125932_important.pdf'
-response = client.create_signature_request(file_path, recipients, sign_params)
+response = client.create_signature(file_path, recipients, sign_params)
 ```
 
 You can enable the security mode, by setting the recipient phone.
@@ -130,7 +135,7 @@ And if you have some templates created, you can use them too.
 recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
 sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', 'templates': ['id1',...]}
 file_path = []
-response = client.create_signature_request(file_path, recipients, sign_params)
+response = client.create_signature(file_path, recipients, sign_params)
 ```
 
 
@@ -140,7 +145,7 @@ You can send templates with the fields filled
 recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
 sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', 'templates': {'TEMPLATE_ID'}, 'data': {'WIDGET_ID': 'DEFAULT_VALUE'}}
 
-response = client.create_signature_request({}, recipients, sign_params)
+response = client.create_signature({}, recipients, sign_params)
 ```
 
 You can add custom info in your requests
@@ -149,7 +154,7 @@ You can add custom info in your requests
 recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
 sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', 'data': {'crm_id': '45673'}}
 file_path = '/documents/contracts/125932_important.pdf'
-response = client.create_signature_request(file_path, recipients, sign_params)
+response = client.create_signature(file_path, recipients, sign_params)
 ```
 
 ### Cancel signature request
@@ -157,7 +162,7 @@ response = client.create_signature_request(file_path, recipients, sign_params)
 Cancel a signature request.
 
 ```python
-response = client.cancel_signature_request('SIGNATURE_ID');
+response = client.cancel_signature('SIGNATURE_ID');
 ```
 
 ### Send reminder
@@ -165,7 +170,7 @@ response = client.cancel_signature_request('SIGNATURE_ID');
 Send a reminder email.
 
 ```python
-response = client.send_reminder('SIGNATURE_ID', 'DOCUMENT_ID');
+response = client.send_signature_reminder('SIGNATURE_ID', 'DOCUMENT_ID');
 ```
 
 ### Get audit trail
@@ -173,7 +178,7 @@ response = client.send_reminder('SIGNATURE_ID', 'DOCUMENT_ID');
 Get the audit trail of a signature request document and save it in the submitted path.
 
 ```python
-response = client.get_audit_trail('ID','DOCUMENT_ID','/path/doc.pdf')
+response = client.download_audit_trail('ID','DOCUMENT_ID','/path/doc.pdf')
 ```
 
 ### Get signed document
@@ -181,7 +186,7 @@ response = client.get_audit_trail('ID','DOCUMENT_ID','/path/doc.pdf')
 Get the signed document of a signature request document and save it in the submitted path.
 
 ```python
-response = client.get_signed_document('ID','DOCUMENT_ID','/path/doc.pdf')
+response = client.download_signed_document('ID','DOCUMENT_ID','/path/doc.pdf')
 ```
 
 ## Account
@@ -192,30 +197,6 @@ Retrieve the information of your account.
 
 ```python
 response = client.get_account()
-```
-
-### Set document storage
-
-Set your own storage credentials, to store a copy of the documents. You can get all the info of credential types [here](http://docs.signaturit.com/api/#account_set_credentials).
-
-```python
-credentials = {
-    "user": "john",
-    "port": 22,
-    "dir": "/test",
-    "host": "john.doe.server",
-    "password": "XXX",
-    "auth_method": "PASS"
-}
-response = client.set_document_storage(sftp, credentials)
-```
-
-### Revert to default document storage
-
-If you ever want to store your files in Signaturit's servers just run this method:
-
-```python
-client.revert_to_default_document_storage()
 ```
 
 ## Branding
@@ -272,8 +253,10 @@ Change a template. Learn more about the templates [here](http://docs.signaturit.
 
 ```python
 file_path = '/path/new_template.html'
-response = client.update_branding_template('BRANDING_ID', 'sign_request', file_path)
+response = client.update_branding_email('BRANDING_ID', 'sign_request', file_path)
 ```
+
+##Templates
 
 ### Get templates
 
@@ -281,4 +264,88 @@ Retrieve all data from your templates.
 
 ```python
 response = client.get_templates()
+```
+
+##Emails
+
+### Get emails
+
+####Get all certified emails
+
+```python
+response = client.get_emails()
+```
+
+####Get last 50 emails
+
+```python
+response = client.get_emails(50)
+```
+
+####Navigate through all emails in blocks of 50 results
+
+```python
+response = client.get_emails(50, 50)
+```
+
+### Count emails
+
+Count all certified emails
+
+```python
+response = client.count_emails()
+```
+
+### Get email
+
+Get a single email
+
+```python
+client.get_email('EMAIL_ID')
+``
+
+### Get email certificates
+
+Get a single email certificates
+
+```python
+client.get_email_certificates('EMAIL_ID')
+``
+
+### Get email
+
+Get a single email certificate
+
+```python
+client.get_email('EMAIL_ID', 'CERTIFICATE_ID')
+``
+
+### Create email
+
+Create a new certified emails.
+
+```python
+response = client.create_email(
+    [ 'demo.pdf', 'receip.pdf' ],
+    [{'email': 'john.doe@signaturit.com', 'fullname': 'Mr John'}],
+    'Python subject',
+    'Python body',
+    []
+)
+```
+
+### Get original document
+
+Get the original document of an email request and save it in the submitted path.
+
+```python
+response = client.download_email_original_file('EMAIL_ID','CERTIFICATE_ID','/path/doc.pdf')
+```
+
+### Get audit trail document
+
+Get the audit trail document of an email request and save it in the submitted path.
+
+```python
+response = client.download_email_audit_trail('EMAIL_ID','CERTIFICATE_ID','/path/doc.pdf')
 ```

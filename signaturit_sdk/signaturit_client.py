@@ -11,6 +11,16 @@ class SignaturitClient:
     BRANDINGS_LOGO_URL = '/v2/brandings/%s/%s.json'
     BRANDINGS_TEMPLATES_URL = '/v2/brandings/%s/%s/%s.json'
 
+    EMAILS_URL = '/v3/emails.json'
+    EMAILS_COUNT_URL = '/v3/emails/count.json'
+    EMAILS_ID_URL = '/v3/emails/%s.json'
+    EMAILS_CERTIFICATES_URL = '/v3/emails/%s/certificates.json'
+    EMAILS_CERTIFICATES_ID_URL = '/v3/emails/%s/certificates/%s.json'
+    EMAILS_AUDIT_TRAIL = '/v3/emails/%s/certificates/%s/download/audit_trail'
+    EMAILS_ORIGINAL = '/v3/emails/%s/certificates/%s/download/original'
+
+    CREATE_EMAIL_PARAMS = ['send_email_event', 'files', 'recipients', 'subject', 'body']
+
     CREATE_SIGN_PARAMS = ['subject', 'body', 'recipients', 'files', 'in_person_sign', 'sequential', 'mandatory_pages',
                           'mandatory_photo', 'mandatory_voice', 'branding_id', 'templates', 'method', 'sms_auth',
                           'data', 'signature_pos_x', 'signature_pos_y']
@@ -57,71 +67,6 @@ class SignaturitClient:
 
         return connection.get_request()
 
-    def set_document_storage(self, storage_type, params):
-        """
-        Set the credentials in account, in order to store a copy from all documents
-        @type: Type of server, sftp or s3
-        Credentials by type:
-                sftp:
-                    - host: Your host
-                    - port: Connection port
-                    - dir: Directory where store the files
-                    - user: Username
-                    - auth_method: KEY or PASS
-                    pass:
-                        - password: Password
-                    key:
-                        - private: Private key
-                        - public: Public key
-                        - passphrase: The passphrase
-                s3:
-                    - bucket: Name of bucket
-                    - key: S3 key
-                    - secret: S3 secret
-        @params: An array with credentials data
-        """
-        params['type'] = storage_type
-
-        parser = Parser(self.DOCUMENT_STORAGE_ALL, self.DOCUMENT_STORAGE)
-        parser.validate_data(params)
-
-        if storage_type is 's3':
-            parser.add_params(self.STORAGE_S3)
-            parser.add_mandatory_params(self.STORAGE_S3)
-            parser.validate_data(params)
-        elif storage_type is 'sftp':
-            parser.add_params(self.STORAGE_SFTP)
-            parser.add_mandatory_params(self.STORAGE_SFTP)
-            parser.validate_data(params)
-
-            auth_method = params['auth_method']
-
-            if auth_method is 'KEY':
-                parser.add_params(self.STORAGE_SFTP_KEY)
-                parser.add_mandatory_params(self.STORAGE_SFTP_KEY)
-                parser.validate_data(params)
-            elif auth_method is 'PASS':
-                parser.add_params(self.STORAGE_SFTP_PASSWORD)
-                parser.add_mandatory_params(self.STORAGE_SFTP_PASSWORD)
-                parser.validate_data(params)
-
-        connection = Connection(self.token)
-        connection.add_header('Content-Type', 'application/json')
-        connection.set_url(self.production, self.ACCOUNT_STORAGE_URL)
-        connection.add_params(params, json_format=True)
-
-        return connection.post_request()
-
-    def revert_to_default_document_storage(self):
-        """
-        Revert to signaturit's default document storage
-        @return Account data
-        """
-        connection = Connection(self.token)
-        connection.set_url(self.production, self.ACCOUNT_STORAGE_URL)
-
-        return connection.delete_request()
-
     def get_signature(self, signature_id):
         """
         Get a concrete Signature
@@ -132,50 +77,50 @@ class SignaturitClient:
 
         return connection.get_request()
 
-    def get_signatures(self, limit=100, offset=0, status=None, since=None, data=None, ids=None):
+    def get_signatures(self, limit=100, offset=0, conditions={}):
         """
         Get all signatures
         """
         url = self.SIGNS_URL + "?limit=%s&offset=%s" % (limit, offset)
 
-        if status is not None:
-            url += '&status=%s' % status
+        for key, value in conditions.items():
+            if key is 'ids':
+                ids = ",".join(value)
+                url += '&ids=%s' % ids
+                continue
 
-        if since is not None:
-            url += '&since=%s' % since
+            if key is 'data':
+                for data_key, data_value in value.items():
+                    url += '&data.%s=%s' % (data_key, data_value)
 
-        if data is not None and isinstance(data, dict):
-            for data_key, data_value in data.items():
-                url += '&data.%s=%s' % (data_key, data_value)
+                continue
 
-        if ids is not None:
-            ids = ",".join(ids)
-            url += '&ids=%s' % ids
+            url += '&%s=%s' % (key, value)
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
 
         return connection.get_request()
 
-    def count_signatures(self, status=None, since=None, data=None, ids=None):
+    def count_signatures(self, conditions={}):
         """
         Count all signatures
         """
         url = self.SIGNS_COUNT_URL + '?'
 
-        if status is not None:
-            url += '&status=%s' % status
+        for key, value in conditions.items():
+            if key is 'ids':
+                ids = ",".join(value)
+                url += '&ids=%s' % ids
+                continue
 
-        if since is not None:
-            url += '&since=%s' % since
+            if key is 'data':
+                for data_key, data_value in value.items():
+                    url += '&data.%s=%s' % (data_key, data_value)
 
-        if data is not None and isinstance(data, dict):
-            for data_key, data_value in data.items():
-                url += '&data.%s=%s' % (data_key, data_value)
+                continue
 
-        if ids is not None:
-            ids = ",".join(ids)
-            url += '&ids=%s' % ids
+            url += '&%s=%s' % (key, value)
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
@@ -202,7 +147,7 @@ class SignaturitClient:
 
         return connection.get_request()
 
-    def get_audit_trail(self, signature_id, document_id, path):
+    def download_audit_trail(self, signature_id, document_id, path):
         """
         Get the audit trail of concrete document
         @signature_id: Id of signature
@@ -221,7 +166,7 @@ class SignaturitClient:
         f.write(response)
         f.close()
 
-    def get_signed_document(self, signature_id, document_id, path):
+    def download_signed_document(self, signature_id, document_id, path):
         """
         Get the audit trail of concrete document
         @signature_id: Id of signature
@@ -241,7 +186,7 @@ class SignaturitClient:
         f.write(response)
         f.close()
 
-    def create_signature_request(self, files, recipients, params):
+    def create_signature(self, files, recipients, params):
         """
         Create a new Signature request.
         @files
@@ -285,7 +230,7 @@ class SignaturitClient:
 
         return connection.post_request()
 
-    def cancel_signature_request(self, signature_id):
+    def cancel_signature(self, signature_id):
         """
         Cancel a concrete Signature
         @signature_id: Id of signature
@@ -297,7 +242,7 @@ class SignaturitClient:
 
         return connection.patch_request()
 
-    def send_reminder(self, signature_id, document_id):
+    def send_signature_reminder(self, signature_id, document_id):
         """
         Send a reminder email
         @signature_id: Id of signature
@@ -409,7 +354,7 @@ class SignaturitClient:
 
         return connection.put_request()
 
-    def update_branding_template(self, branding_id, template, file_path):
+    def update_branding_email(self, branding_id, template, file_path):
         """
         Update the template of a branding
         """
@@ -436,3 +381,130 @@ class SignaturitClient:
         connection.set_url(self.production, url)
 
         return connection.get_request()
+
+    def get_emails(self, limit=100, offset=0, conditions={}):
+        """
+        Get all certified emails
+        """
+        url = self.EMAILS_URL + "?limit=%s&offset=%s" % (limit, offset)
+
+        connection = Connection(self.token)
+
+        for key, value in conditions.items():
+            url += "&%s=%s" % (key, value)
+
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def count_emails(self, conditions={}):
+        """
+        Count all certified emails
+        """
+        url = self.EMAILS_COUNT_URL + "?"
+
+        connection = Connection(self.token)
+
+        for key, value in conditions.items():
+            url += "&%s=%s" % (key, value)
+
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_email(self, email_id):
+        """
+        Get a specific email
+        """
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.EMAILS_ID_URL % email_id)
+
+        return connection.get_request()
+
+    def get_email_certificates(self, email_id):
+        """
+        Get certificates from a specific email
+        """
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.EMAILS_CERTIFICATES_URL % email_id)
+
+        return connection.get_request()
+
+    def get_email_certificate(self, email_id, certificate_id):
+        """
+        Get single certificate from a specific email
+        """
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.EMAILS_CERTIFICATES_ID_URL % (email_id, certificate_id))
+
+        return connection.get_request()
+
+    def download_email_audit_trail(self, email_id, certificate_id, path):
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.EMAILS_AUDIT_TRAIL % (email_id, certificate_id))
+
+        response, headers = connection.file_request()
+
+        if headers['content-type'] == 'application/json':
+            return response
+
+        f = open(path, 'w')
+        f.write(response)
+        f.close()
+
+    def download_email_original_file(self, email_id, certificate_id, path):
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.EMAILS_ORIGINAL % (email_id, certificate_id))
+
+        response, headers = connection.file_request()
+
+        if headers['content-type'] == 'application/json':
+            return response
+
+        f = open(path, 'w')
+        f.write(response)
+        f.close()
+
+    def create_email(self, files, recipients, subject, body, params):
+        """
+        Create a new certified email
+
+        @files
+             Files to send
+                ex: ['/documents/internet_contract.pdf', ... ]
+        @recipients
+            A dictionary with the email and fullname of the person you want to sign.
+            If you wanna send only to one person:
+               - [{"email": "john_doe@gmail.com", "fullname": "John"}]
+            For multiple recipients, yo need to submit a list of dicts:
+               - [{"email": "john_doe@gmail.com", "fullname": "John"}, {"email":"bob@gmail.com", "fullname": "Bob"}]
+        @subject
+            Email subject
+        @body
+            Email body
+        @params
+            Optional parameters
+            send_email_event: Chooses the event that will trigger the audit trail generation
+                - delivered: When email is delivered
+                - seen: When app is opened (only emails with pdfs attached)
+                - opened: When document is opened (only emails with pdfs attached)
+        """
+        params['files'] = files
+        params['recipients'] = recipients
+        params['subject'] = subject
+        params['body'] = body
+
+        parser = Parser(self.CREATE_EMAIL_PARAMS, [])
+        params, files = parser.parse_data(params)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, self.EMAILS_URL)
+        connection.add_params(params)
+        connection.add_files(files)
+
+        return connection.post_request()

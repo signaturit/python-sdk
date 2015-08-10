@@ -3,14 +3,14 @@ import os
 from signaturit_sdk.signaturit_client import SignaturitClient
 from signaturit_sdk.resources.parser import Parser
 import httpretty
-import json
+
 
 class SignatureTest(unittest.TestCase):
     TEST_FILE_URL = '/tmp/test.pdf'
 
     def test_create_signature_with_invalid_params_should_raise_exception(self):
         client = SignaturitClient('TOKEN')
-        self.assertRaises(Exception, client.create_signature_request, {'testing': 'some_value'})
+        self.assertRaises(Exception, client.create_signature, {'testing': 'some_value'})
 
     def test_create_signature_with_valid_params_should_format_the_params_correctly(self):
         client = SignaturitClient('TOKEN')
@@ -48,27 +48,27 @@ class SignatureTest(unittest.TestCase):
         os.unlink(self.TEST_FILE_URL)
 
     @httpretty.activate
-    def test_cancel_signature_request(self):
+    def test_cancel_signature(self):
         httpretty.register_uri(httpretty.PATCH, "http://api.sandbox.signaturit.com/v2/signs/SIGN_ID/cancel.json",
                                body='{"id": "SIGN_ID", "recipients": [{"email": "test@test.com", "fullname": "Mr Test"}], "subject": "Testing"}',
                                content_type="application/json")
 
         signaturit_client = SignaturitClient('SOME_TOKEN')
 
-        response = signaturit_client.cancel_signature_request('SIGN_ID')
+        response = signaturit_client.cancel_signature('SIGN_ID')
 
         self.assertEqual('Testing', response['subject'])
         self.assertEqual([{"email": "test@test.com", "fullname": "Mr Test"}], response['recipients'])
 
     @httpretty.activate
-    def test_send_reminder(selfself):
+    def test_send_signature_reminder(self):
         httpretty.register_uri(httpretty.POST, "http://api.sandbox.signaturit.com/v2/signs/SIGN_ID/documents/JOB_ID/reminder.json",
                                body='{}',
                                content_type="application/json")
 
         signaturit_client = SignaturitClient('SOME_TOKEN')
 
-        signaturit_client.send_reminder('SIGN_ID', 'JOB_ID')
+        signaturit_client.send_signature_reminder('SIGN_ID', 'JOB_ID')
 
     @httpretty.activate
     def test_get_signatures(self):
@@ -122,7 +122,7 @@ class SignatureTest(unittest.TestCase):
 
         signaturit_client = SignaturitClient('SOME_CLIENT')
 
-        response = signaturit_client.create_signature_request([self.TEST_FILE_URL], [{"email": "test@test.com", "fullname": "Mr Test"}], {})
+        response = signaturit_client.create_signature([self.TEST_FILE_URL], [{"email": "test@test.com", "fullname": "Mr Test"}], {})
 
         self.assertEqual('Testing', response['subject'])
         self.assertEqual('SIGN_ID', response['id'])
