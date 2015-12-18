@@ -1,3 +1,6 @@
+DO NOT USE THIS CODE ON PRODUCTION UNTIL NEW RELEASE IS DONE
+============================================================
+
 Signaturit Python SDK
 =====================
 This package is a wrapper for Signaturit Api. If you didn't read the documentation yet, maybe it's time to take a look [here](http://docs.signaturit.com/).
@@ -70,7 +73,7 @@ response = client.get_signatures(conditions={'since': '2014-7-20', 'status': 3})
 ##### Getting signatures with custom field "crm_id"
 
 ```python
-response = client.get_signatures(conditions={'data': {'crm_id': 'CUSTOM_ID'}})
+response = client.get_signatures(conditions={'crm_id': 'CUSTOM_ID'})
 ```
 ##### Getting signatures inside a set of ids
 
@@ -92,22 +95,6 @@ Get a single signature request.
 
 ```python
 response = client.get_signature('SIGNATURE_ID')
-```
-
-### Get signature documents
-
-Get all documents from a signature request.
-
-```python
-response = client.get_signature_documents('SIGNATURE_ID')
-```
-
-### Get signature document
-
-Get a single document from a signature request.
-
-```python
-response = client.get_signature_document('SIGNATURE_ID','DOCUMENT_ID')
 ```
 
 ### Signature request
@@ -175,18 +162,18 @@ response = client.send_signature_reminder('SIGNATURE_ID', 'DOCUMENT_ID');
 
 ### Get audit trail
 
-Get the audit trail of a signature request document and save it in the submitted path.
+Get the audit trail of a signature request document
 
 ```python
-response = client.download_audit_trail('ID','DOCUMENT_ID','/path/doc.pdf')
+response = client.download_audit_trail('ID','DOCUMENT_ID')
 ```
 
 ### Get signed document
 
-Get the signed document of a signature request document and save it in the submitted path.
+Get the signed document of a signature request document
 
 ```python
-response = client.download_signed_document('ID','DOCUMENT_ID','/path/doc.pdf')
+response = client.download_signed_document('ID','DOCUMENT_ID')
 ```
 
 ## Account
@@ -238,24 +225,6 @@ branding_params = {'application_texts': {'send_button': 'Send!'}}
 response = client.update_branding('BRANDING_ID', branding_params)
 ```
 
-### Update branding logo
-
-Change the branding logo.
-
-```python
-file_path = '/path/new_logo.png'
-response = client.update_branding_logo('BRANDING_ID', file_path)
-```
-
-### Update branding template
-
-Change a template. Learn more about the templates [here](http://docs.signaturit.com/api/#put_template_branding).
-
-```python
-file_path = '/path/new_template.html'
-response = client.update_branding_email('BRANDING_ID', 'sign_request', file_path)
-```
-
 ##Templates
 
 ### Get templates
@@ -304,29 +273,13 @@ Get a single email
 client.get_email('EMAIL_ID')
 ```
 
-### Get email certificates
-
-Get a single email certificates
-
-```python
-client.get_email_certificates('EMAIL_ID')
-```
-
-### Get email certificate
-
-Get a single email certificate
-
-```python
-client.get_email('EMAIL_ID', 'CERTIFICATE_ID')
-```
-
 ### Create email
 
 Create a new certified emails.
 
 ```python
 response = client.create_email(
-    [ 'demo.pdf', 'receip.pdf' ],
+    [ 'demo.pdf', 'receipt.pdf' ],
     [{'email': 'john.doe@signaturit.com', 'fullname': 'Mr John'}],
     'Python subject',
     'Python body',
@@ -334,18 +287,10 @@ response = client.create_email(
 )
 ```
 
-### Get original document
-
-Get the original document of an email request and save it in the submitted path.
-
-```python
-response = client.download_email_original_file('EMAIL_ID','CERTIFICATE_ID','/path/doc.pdf')
-```
-
 ### Get audit trail document
 
-Get the audit trail document of an email request and save it in the submitted path.
+Get the audit trail document of an email request
 
 ```python
-response = client.download_email_audit_trail('EMAIL_ID','CERTIFICATE_ID','/path/doc.pdf')
+response = client.download_email_audit_trail('EMAIL_ID','CERTIFICATE_ID')
 ```

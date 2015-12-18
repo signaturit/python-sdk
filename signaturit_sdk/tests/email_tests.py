@@ -12,33 +12,6 @@ class EmailTest(unittest.TestCase):
         client = SignaturitClient('TOKEN')
         self.assertRaises(Exception, client.create_email, {'testing': 'some_value'})
 
-    def test_create_email_with_valid_params_should_format_the_params_correctly(self):
-        client = SignaturitClient('TOKEN')
-
-        parser = Parser(client.CREATE_EMAIL_PARAMS, [])
-
-        open(self.TEST_FILE_URL, 'a').close()
-
-        email_params = {'subject': 'Certified email',
-                        'body': 'Please, can you check this receipt? Just click the button!',
-                        'recipients': [{'email': 'pau.soler@signatur.it', 'fullname': 'Pau'},
-                                       {'email': 'john.doe@signatur.it', 'fullname': 'John'}],
-                        'files': [self.TEST_FILE_URL]}
-
-        expected_params = {'body': 'Please, can you check this receipt? Just click the button!',
-                           'recipients[1][email]': 'john.doe@signatur.it',
-                           'recipients[0][email]': 'pau.soler@signatur.it',
-                           'recipients[0][fullname]': 'Pau',
-                           'recipients[1][fullname]': 'John',
-                           'subject': 'Certified email'}
-
-        parsed_data, files = parser.parse_data(email_params)
-
-        self.assertEquals(expected_params, parsed_data)
-        self.assertEquals(1, len(files))
-
-        os.unlink(self.TEST_FILE_URL)
-
     @httpretty.activate
     def test_get_emails(self):
         httpretty.register_uri(httpretty.GET, "http://api.sandbox.signaturit.com/v3/emails.json",
