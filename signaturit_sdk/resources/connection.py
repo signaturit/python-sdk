@@ -26,7 +26,7 @@ class Connection:
 
     def set_url(self, prod, url):
         if prod is False:
-            self.__base_url = 'http://api.sandbox.signaturit.com'
+            self.__base_url = 'https://api.sandbox.signaturit.com'
         else:
             self.__base_url = 'https://api.signaturit.com'
 

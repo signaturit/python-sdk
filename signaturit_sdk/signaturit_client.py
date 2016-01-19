@@ -122,6 +122,8 @@ class SignaturitClient:
 
         parser = Parser()
 
+        recipients = recipients if isinstance(recipients, list) else [recipients]
+
         index = 0
         for recipient in recipients:
             parser.fill_array(parameters, recipient, 'recipients[%i]' % index)
@@ -153,7 +155,7 @@ class SignaturitClient:
 
         return connection.patch_request()
 
-    def send_signature_reminder(self, signature_id, document_id):
+    def send_signature_reminder(self, signature_id):
         """
         Send a reminder email
         @signature_id: Id of signature
@@ -296,7 +298,7 @@ class SignaturitClient:
 
         return response
 
-    def create_email(self, files, recipients, subject, body, params):
+    def create_email(self, files, recipients, subject, body, params={}):
         """
         Create a new certified email
 
