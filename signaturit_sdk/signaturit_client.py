@@ -19,7 +19,7 @@ class SignaturitClient:
     SIGNS_ID_URL = '/v3/signatures/%s.json'
     SIGNS_DOCUMENTS_AUDIT_URL = '/v3/signatures/%s/documents/%s/download/audit_trail'
     SIGNS_DOCUMENTS_SIGNED_URL = '/v3/signatures/%s/documents/%s/download/signed'
-    SIGNS_SEND_REMINDER_URL = '/v3/signatures/%s/documents/%s/reminder.json'
+    SIGNS_SEND_REMINDER_URL = '/v3/signatures/%s/reminder.json'
 
     TEMPLATES_URL = '/v3/templates.json'
 
@@ -161,7 +161,7 @@ class SignaturitClient:
         """
         connection = Connection(self.token)
 
-        connection.set_url(self.production, self.SIGNS_SEND_REMINDER_URL % (signature_id, document_id))
+        connection.set_url(self.production, self.SIGNS_SEND_REMINDER_URL % signature_id)
 
         return connection.post_request()
 
