@@ -1,3 +1,7 @@
+========================
+DO NOT USE MASTER BRANCH
+========================
+
 Signaturit Python SDK
 =====================
 This package is a wrapper for Signaturit Api. If you didn't read the documentation yet, maybe it's time to take a look [here](https://docs.signaturit.com/v3).
