@@ -1,9 +1,10 @@
-DO NOT USE THIS CODE ON PRODUCTION UNTIL NEW RELEASE IS DONE
-============================================================
+========================
+DO NOT USE MASTER BRANCH
+========================
 
 Signaturit Python SDK
 =====================
-This package is a wrapper for Signaturit Api. If you didn't read the documentation yet, maybe it's time to take a look [here](http://docs.signaturit.com/).
+This package is a wrapper for Signaturit Api. If you didn't read the documentation yet, maybe it's time to take a look [here](https://docs.signaturit.com/v3).
 
 You can install the package through pip.
 
@@ -58,7 +59,7 @@ response = client.get_signatures(limit=50)
 response = client.get_signatures(limit=50, offset=50)
 ```
 
-##### Getting only the finished signatures 
+##### Getting only the finished signatures
 
 ```python
 response = client.get_signatures(conditions={'status': 3})
@@ -99,10 +100,10 @@ response = client.get_signature('SIGNATURE_ID')
 
 ### Signature request
 
-Create a new signature request. Check all [params](http://docs.signaturit.com/api/#sign_create_sign).
+Create a new signature request. You can check all signature [params](https://docs.signaturit.com/api/v3#sign_create_sign).
 
 ```python
-recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
+recipients =  [{'name': 'Bob', 'email': 'bobsoap@signatur.it'}]
 sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?'}
 file_path = '/documents/contracts/125932_important.pdf'
 response = client.create_signature(file_path, recipients, sign_params)
@@ -111,7 +112,7 @@ response = client.create_signature(file_path, recipients, sign_params)
 You can enable the security mode, by setting the recipient phone.
 
 ```python
-recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it', 'phone': 'XXXXX}]'}]
+recipients =  [{'name': 'Bob', 'email': 'bobsoap@signatur.it', 'phone': 'XXXXX}]'}]
 ```
 
 Then, the user will receive a SMS in the phone number with a security code, needed to begin the sign process.
@@ -119,7 +120,7 @@ Then, the user will receive a SMS in the phone number with a security code, need
 And if you have some templates created, you can use them too.
 
 ```python
-recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
+recipients =  [{'name': 'Bob', 'email': 'bobsoap@signatur.it'}]
 sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', 'templates': ['id1',...]}
 file_path = []
 response = client.create_signature(file_path, recipients, sign_params)
@@ -129,7 +130,7 @@ response = client.create_signature(file_path, recipients, sign_params)
 You can send templates with the fields filled
 
 ```python
-recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
+recipients =  [{'name': 'Bob', 'email': 'bobsoap@signatur.it'}]
 sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', 'templates': {'TEMPLATE_ID'}, 'data': {'WIDGET_ID': 'DEFAULT_VALUE'}}
 
 response = client.create_signature({}, recipients, sign_params)
@@ -138,7 +139,7 @@ response = client.create_signature({}, recipients, sign_params)
 You can add custom info in your requests
 
 ```python
-recipients =  [{'fullname': 'Bob', 'email': 'bobsoap@signatur.it'}]
+recipients =  [{'name': 'Bob', 'email': 'bobsoap@signatur.it'}]
 sign_params = {'subject': 'Receipt number 250', 'body': 'Please, can you sign this document?', 'data': {'crm_id': '45673'}}
 file_path = '/documents/contracts/125932_important.pdf'
 response = client.create_signature(file_path, recipients, sign_params)
@@ -165,7 +166,7 @@ response = client.send_signature_reminder('SIGNATURE_ID');
 Get the audit trail of a signature request document
 
 ```python
-response = client.download_audit_trail('ID','DOCUMENT_ID')
+response = client.download_audit_trail('SIGNATURE_ID','DOCUMENT_ID')
 ```
 
 ### Get signed document
@@ -173,17 +174,7 @@ response = client.download_audit_trail('ID','DOCUMENT_ID')
 Get the signed document of a signature request document
 
 ```python
-response = client.download_signed_document('ID','DOCUMENT_ID')
-```
-
-## Account
-
-### Get account
-
-Retrieve the information of your account.
-
-```python
-response = client.get_account()
+response = client.download_signed_document('SIGNATURE_ID','DOCUMENT_ID')
 ```
 
 ## Branding
@@ -206,11 +197,11 @@ response = client.get_branding('BRANDING_ID')
 
 ### Create branding
 
-Create a new branding. You can check all branding params [here](http://docs.signaturit.com/api/#set_branding).`
+Create a new branding. You can check all branding [params](https://docs.signaturit.com/api/v3#set_branding).`
 
 ```python
-branding_params = {'corporate_layout_color': '#FFBF00',
-                   'corporate_text_color': '#2A1B0A',
+branding_params = {'layout_color': '#FFBF00',
+                   'text_color': '#2A1B0A',
                    'application_texts': {'sign_button': 'Sign!'}
 }
 response = client.create_branding(branding_params)
@@ -280,7 +271,7 @@ Create a new certified emails.
 ```python
 response = client.create_email(
     [ 'demo.pdf', 'receipt.pdf' ],
-    [{'email': 'john.doe@signaturit.com', 'fullname': 'Mr John'}],
+    [{'email': 'john.doe@signaturit.com', 'name': 'Mr John'}],
     'Python subject',
     'Python body',
     {}

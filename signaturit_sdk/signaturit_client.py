@@ -1,7 +1,6 @@
 from resources.connection import Connection
 from resources.parser import Parser
 
-
 class SignaturitClient:
     BRANDINGS_URL = '/v3/brandings.json'
     BRANDINGS_ID_URL = '/v3/brandings/%s.json'
