@@ -10,14 +10,14 @@ class Parser:
         iterable = parameters.items() if isinstance(parameters, dict) else enumerate(parameters)
 
         for key, value in iterable:
-            if isinstance(value, dict):
-                parent_key = "%s[%s]" % (parent, key) if len(parent) else key
+            parent_key = "%s[%s]" % (parent, key) if len(parent) else key
 
+            if isinstance(value, dict):
+                self.fill_array(form_array, value, parent_key)
+            elif isinstance(value, list):
                 self.fill_array(form_array, value, parent_key)
             else:
                 if parent is 'files':
                     value = open(value, 'rb')
-
-                parent_key = "%s[%s]" % (parent, key) if len(parent) else key
 
                 form_array[parent_key] = value
