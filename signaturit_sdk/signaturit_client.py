@@ -1,5 +1,6 @@
-from resources.connection import Connection
-from resources.parser import Parser
+from signaturit_sdk.resources.connection import Connection
+from signaturit_sdk.resources.parser import Parser
+
 
 class SignaturitClient:
     BRANDINGS_URL = '/v3/brandings.json'
