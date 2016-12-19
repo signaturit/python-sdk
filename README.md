@@ -285,3 +285,260 @@ Get the audit trail document of an email request
 ```python
 response = client.download_email_audit_trail('EMAIL_ID','CERTIFICATE_ID')
 ```
+
+##SMS
+
+### Get sms
+
+####Get all certified sms
+
+```python
+response = client.get_sms()
+```
+
+####Get last 50 sms
+
+```python
+response = client.get_sms(50)
+```
+
+####Navigate through all sms in blocks of 50 results
+
+```python
+response = client.get_sms(50, 50)
+```
+
+### Count emails
+
+Count all certified sms
+
+```python
+response = client.count_sms()
+```
+
+### Get single sms
+
+Get a single sms
+
+```python
+client.get_single_sms('SMS_ID')
+```
+
+### Create email
+
+Create a new certified sms.
+
+```python
+response = client.create_sms(
+    [],
+    [{'phone': '34123456', 'name': 'Mr John'}],
+    'Python body',
+    {}
+)
+```
+
+### Get audit trail document
+
+Get the audit trail document of an sms request
+
+```python
+response = client.download_sms_audit_trail('SMS_ID','CERTIFICATE_ID')
+```
+
+##Packages
+
+### Get packages
+
+####Get all packages
+
+```python
+response = client.get_packages()
+```
+
+####Get last 50 packages
+
+```python
+response = client.get_packages(50)
+```
+
+####Navigate through all packages in blocks of 50 results
+
+```python
+response = client.get_packages(50, 50)
+```
+
+### Get single package
+
+Get a single package
+
+```python
+client.get_package('PACKAGE_ID')
+```
+
+### Create email package
+
+Create a new package of certified emails
+
+```python
+response = client.create_email_package(
+    'files/users.csv',
+    ['files/document.pdf'],
+    {'subject': 'bulk request'}
+)
+```
+
+### Get audit trail document
+
+Get the audit trail document of an bulk request
+
+```python
+response = client.download_package_audit_trail('PACKAGE_ID')
+```
+
+##Team
+
+### Get users
+
+```python
+response = client.get_users()
+```
+
+### Get user
+
+```python
+response = client.get_user(USER_ID)
+```
+
+### Invite user to your team
+
+```python
+response = client.invite_user('bob.soap@signaturit.com', 'admin')
+```
+
+### Change user role
+
+```python
+response = client.change_role(USER_ID, 'member')
+```
+
+### Delete a user from your team
+
+```python
+response = client.remove_user(USER_ID)
+```
+
+### Get groups
+
+```python
+response = client.get_groups()
+```
+
+### Get group
+
+```python
+response = client.get_group(GROUP_ID)
+```
+
+### Create group
+
+```python
+response = client.crate_group('SDK group')
+```
+
+### Update group
+
+```python
+response = client.update_group(GROUP_ID, 'SDK updated group')
+```
+
+### Delete a group from your team
+
+```python
+response = client.delete_group(GROUP_ID)
+```
+
+### Add user to a group as a manager
+
+```python
+response = client.add_manager_to_group(GROUP_ID, USER_ID)
+```
+
+### Add user to a group as a member
+
+```python
+response = client.add_member_to_group(GROUP_ID, USER_ID)
+```
+
+### Remove user from group managers
+
+```python
+response = client.remove_manager_from_group(GROUP_ID, USER_ID)
+```
+
+### Remove user from group members
+
+```python
+response = client.remove_members_from_group(GROUP_ID, USER_ID)
+```
+
+## Subscriptions
+
+### Get subscriptions
+
+```python
+response = client.get_subscriptions()
+```
+
+### Get subscription
+
+```python
+response = client.get_subscription(SUBSCRIPTION_ID)
+```
+
+### Create subscription
+
+```python
+response = client.create_subscription('https://example_url.json', ['email_delivered'])
+```
+
+### Update subscription
+
+```python
+response = client.update_subscription(subscription_id=SUBSCRIPTION_ID, url='https://new_example_url.json')
+```
+
+### Delete subscription
+```python
+response = client.delete_subscription(SUBSCRIPTION_ID)
+```
+
+## Contacts
+
+### Get contacts
+
+```python
+response = client.get_contacts()
+```
+
+### Get contact
+
+```python
+response = client.get_contact(CONTACT_ID)
+```
+
+### Create contact
+
+```python
+response = client.create_contact('bob.soap@signaturit.com', 'bob')
+```
+
+### Update contact
+
+```python
+response = client.update_contact(contact_id=CONTACT_ID, name='Bob')
+```
+
+### Delete contact
+```python
+response = client.delete_contact(CONTACT_ID)
+```

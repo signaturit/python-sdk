@@ -6,12 +6,31 @@ class SignaturitClient:
     BRANDINGS_URL = '/v3/brandings.json'
     BRANDINGS_ID_URL = '/v3/brandings/%s.json'
 
+    CONTACTS_URL = '/v3/contacts.json'
+    CONTACTS_ID_URL = '/v3/contacts/%s.json'
+
     EMAILS_URL = '/v3/emails.json'
     EMAILS_COUNT_URL = '/v3/emails/count.json'
     EMAILS_ID_URL = '/v3/emails/%s.json'
     EMAILS_AUDIT_TRAIL = '/v3/emails/%s/certificates/%s/download/audit_trail'
 
+    PACKAGES_URL = '/v3/packages.json'
+    PACKAGES_ID_URL = '/v3/packages/%s.json'
+    PACKAGES_SIGNATURE_URL = '/v3/packages/signatures.json'
+    PACKAGES_EMAIL_URL = '/v3/packages/emails.json'
+    PACKAGES_SMS_URL = '/v3/packages/sms.json'
+    PACKAGES_AUDIT_TRAIL_URL = '/v3/packages/%s/download/audit_trail'
+
     PRODUCTION = True
+
+    SMS_URL = '/v3/sms.json'
+    SMS_COUNT_URL = '/v3/sms/count.json'
+    SMS_ID_URL = '/v3/sms/%s.json'
+    SMS_AUDIT_TRAIL = '/v3/sms/%s/certificates/%s/download/audit_trail'
+
+    SUBSCRIPTIONS_URL = '/v3/subscriptions.json'
+    SUBSCRIPTIONS_COUNT_URL = '/v3/subscriptions/count.json'
+    SUBSCRIPTIONS_ID_URL = '/v3/subscriptions/%s.json'
 
     SIGNS_URL = '/v3/signatures.json'
     SIGNS_CANCEL_URL = '/v3/signatures/%s/cancel.json'
@@ -23,19 +42,18 @@ class SignaturitClient:
 
     TEMPLATES_URL = '/v3/templates.json'
 
+    TEAM_USERS_URL = '/v3/team/users.json'
+    TEAM_SEATS_URL = '/v3/team/seats.json'
+    TEAM_SEATS_ID_URL = '/v3/team/seats/%s.json'
+    TEAM_USERS_ID_URL = '/v3/team/users/%s.json'
+    TEAM_MANAGERS_URL = '/v3/team/groups/%s/managers/%s.json'
+    TEAM_MEMBERS_URL = '/v3/team/groups/%s/members/%s.json'
+    TEAM_GROUPS_URL = '/v3/team/groups.json'
+    TEAM_GROUPS_ID_URL = '/v3/team/groups/%s.json'
+
     def __init__(self, token, production=False):
         self.token = token
         self.production = production
-
-    def get_signature(self, signature_id):
-        """
-        Get a concrete Signature
-        @return Signature data
-        """
-        connection = Connection(self.token)
-        connection.set_url(self.production, self.SIGNS_ID_URL % signature_id)
-
-        return connection.get_request()
 
     def get_signatures(self, limit=100, offset=0, conditions={}):
         """
@@ -51,6 +69,16 @@ class SignaturitClient:
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_signature(self, signature_id):
+        """
+        Get a concrete Signature
+        @return Signature data
+        """
+        connection = Connection(self.token)
+        connection.set_url(self.production, self.SIGNS_ID_URL % signature_id)
 
         return connection.get_request()
 
@@ -344,3 +372,647 @@ class SignaturitClient:
         connection.add_files(documents)
 
         return connection.post_request()
+
+    def count_sms(self, conditions={}):
+        """
+        Count all certified sms
+        """
+        url = self.SMS_COUNT_URL + "?"
+
+        for key, value in conditions.items():
+            if key is 'ids':
+                value = ",".join(value)
+
+            url += '&%s=%s' % (key, value)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_sms(self, limit=100, offset=0, conditions={}):
+        """
+        Get all certified sms
+        """
+        url = self.SMS_URL + "?limit=%s&offset=%s" % (limit, offset)
+
+        for key, value in conditions.items():
+            if key is 'ids':
+                value = ",".join(value)
+
+            url += '&%s=%s' % (key, value)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_single_sms(self, sms_id):
+        """
+        Get a specific sms
+        """
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.SMS_ID_URL % sms_id)
+
+        return connection.get_request()
+
+    def download_sms_audit_trail(self, sms_id, certificate_id):
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.SMS_AUDIT_TRAIL % (sms_id, certificate_id))
+
+        response, headers = connection.file_request()
+
+        if headers['content-type'] == 'application/json':
+            return response
+
+        return response
+
+    def create_sms(self, files, recipients, body, params={}):
+        """
+        Create a new certified sms
+
+        @files
+             Files to send
+                ex: ['/documents/internet_contract.pdf', ... ]
+        @recipients
+            A dictionary with the phone and name of the person you want to sign. Phone must be always with prefix
+            If you wanna send only to one person:
+               - [{"phone": "34123456", "name": "John"}]
+            For multiple recipients, yo need to submit a list of dicts:
+               - [{"email": "34123456, "name": "John"}, {"email":"34654321", "name": "Bob"}]
+        @body
+            Email body
+        @params
+        """
+        parameters = {}
+
+        parser = Parser()
+
+        documents = {}
+
+        parser.fill_array(documents, files, 'files')
+
+        recipients = recipients if isinstance(recipients, list) else [recipients]
+
+        index = 0
+        for recipient in recipients:
+            parser.fill_array(parameters, recipient, 'recipients[%i]' % index)
+
+            index += 1
+
+        parser.fill_array(parameters, params, '')
+
+        parameters['body'] = body
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, self.SMS_URL)
+        connection.add_params(parameters)
+        connection.add_files(documents)
+
+        return connection.post_request()
+
+    def get_packages(self, limit=100, offset=0, conditions={}):
+        """
+        Get all packages sent by user
+        """
+        url = self.PACKAGES_URL + "?limit=%s&offset=%s" % (limit, offset)
+
+        for key, value in conditions.items():
+            if key is 'ids':
+                value = ",".join(value)
+
+            url += '&%s=%s' % (key, value)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_package(self, package_id):
+        """
+        Get a single package sent by user
+        """
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.PACKAGES_ID_URL % package_id)
+
+        return connection.get_request()
+
+    def download_package_audit_trail(self, package_id):
+        connection = Connection(self.token)
+
+        connection.set_url(self.production, self.PACKAGES_AUDIT_TRAIL_URL % package_id)
+
+        response, headers = connection.file_request()
+
+        if headers['content-type'] == 'application/json':
+            return response
+
+        return response
+
+    def create_signature_package(self, sheet, files, params={}):
+        """
+            Create a new signature package
+
+            @files
+                 Files to send
+                    ex: ['/documents/internet_contract.pdf', ... ]
+            @sheet
+                 Sheet with recipients information
+                  ex: ['/documents/users.xlsx', ... ]
+            @params
+                See https://docs.signaturit.com/api/latest#packages_post_signature_package to get all parameters
+            """
+        parameters = {}
+
+        parser = Parser()
+
+        documents = {}
+
+        sheet = sheet[0] if isinstance(sheet, list) else sheet
+
+        files = files if isinstance(files, list) else [files]
+
+        parser.fill_array(documents, files, 'files')
+
+        documents['sheet'] = open(sheet, 'rb')
+
+        parser.fill_array(parameters, params, '')
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, self.PACKAGES_SIGNATURE_URL)
+        connection.add_params(parameters)
+        connection.add_files(documents)
+
+        return connection.post_request()
+
+    def create_email_package(self, sheet, files, params={}):
+        """
+            Create a new email package
+
+            @files
+                 Files to send
+                    ex: ['/documents/internet_contract.pdf', ... ]
+            @sheet
+                 Sheet with recipients information
+                  ex: ['/documents/users.xlsx', ... ]
+            @params
+                See https://docs.signaturit.com/api/latest#packages_post_email_package to get all parameters
+            """
+        parameters = {}
+
+        parser = Parser()
+
+        documents = {}
+
+        sheet = sheet[0] if isinstance(sheet, list) else sheet
+
+        files = files if isinstance(files, list) else [files]
+
+        parser.fill_array(documents, files, 'files')
+
+        documents['sheet'] = open(sheet, 'rb')
+
+        parser.fill_array(parameters, params, '')
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, self.PACKAGES_EMAIL_URL)
+        connection.add_params(parameters)
+        connection.add_files(documents)
+
+        return connection.post_request()
+
+    def create_sms_package(self, sheet, files, params={}):
+        """
+            Create a new sms package
+
+            @files
+                 Files to send
+                    ex: ['/documents/internet_contract.pdf', ... ]
+            @sheet
+                 Sheet with recipients information
+                  ex: ['/documents/users.xlsx', ... ]
+            @params
+                See https://docs.signaturit.com/api/latest#packages_post_email_package to get all parameters
+            """
+        parameters = {}
+
+        parser = Parser()
+
+        documents = {}
+
+        sheet = sheet[0] if isinstance(sheet, list) else sheet
+
+        files = files if isinstance(files, list) else [files]
+
+        parser.fill_array(documents, files, 'files')
+
+        documents['sheet'] = open(sheet, 'rb')
+
+        parser.fill_array(parameters, params, '')
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, self.PACKAGES_SMS_URL)
+        connection.add_params(parameters)
+        connection.add_files(documents)
+
+        return connection.post_request()
+
+    def get_users(self, limit=100, offset=0):
+        """
+        Get all users from your current team
+        """
+        url = self.TEAM_USERS_URL + "?limit=%s&offset=%s" % (limit, offset)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_seats(self, limit=100, offset=0):
+        """
+        Get all seats from your current team
+        """
+        url = self.TEAM_SEATS_URL + "?limit=%s&offset=%s" % (limit, offset)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_user(self, user_id):
+        """
+           Get a single user
+        """
+        url = self.TEAM_USERS_ID_URL % user_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def invite_user(self, email, role):
+        """
+        Send an invitation to email with a link to join your team
+        :param email: Email to add to your team
+        :param role: Can be admin or member
+        """
+        parameters = {
+            'email': email,
+            'role': role
+        }
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, self.TEAM_USERS_URL)
+        connection.add_params(parameters)
+
+        return connection.post_request()
+
+    def change_user_role(self, user_id, role):
+        """
+        Change role of current user
+        :param user_id: Id of user
+        :param role: Can be admin or member
+        """
+        parameters = {
+            'role': role
+        }
+
+        url = self.TEAM_USERS_ID_URL % user_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+        connection.add_params(parameters)
+
+        return connection.patch_request()
+
+    def remove_user(self, user_id):
+        """
+        Remove a user from your team
+        :param user_id: Id of user
+        """
+
+        url = self.TEAM_USERS_ID_URL % user_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.delete_request()
+
+    def remove_seat(self, seat_id):
+        """
+        Remove a seat from your team
+        :param seat_id: Id of user
+        """
+
+        url = self.TEAM_SEATS_ID_URL % seat_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.delete_request()
+
+    def get_groups(self, limit=100, offset=0):
+        """
+        Get all groups from your current team
+        """
+        url = self.TEAM_GROUPS_URL + "?limit=%s&offset=%s" % (limit, offset)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_group(self, group_id):
+        """
+        Get a single group
+        """
+        url = self.TEAM_GROUPS_ID_URL % group_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def create_group(self, name):
+        """
+        Create group
+        :param name: Group name
+        """
+        parameters = {
+            'name': name
+        }
+
+        url = self.TEAM_GROUPS_URL
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+        connection.add_params(parameters)
+
+        return connection.post_request()
+
+    def update_group(self, group_id, name):
+        """
+        Change group name
+        :param group_id: Id of group
+        :param name: Group name
+        """
+        parameters = {
+            'name': name
+        }
+
+        url = self.TEAM_GROUPS_ID_URL % group_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+        connection.add_header('Content-Type', 'application/json')
+        connection.add_params(parameters)
+
+        return connection.patch_request()
+
+    def delete_group(self, group_id):
+        """
+        Remove a group from your team
+        :param group_id: Id of group
+        """
+
+        url = self.TEAM_GROUPS_ID_URL % group_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.delete_request()
+
+    def add_member_to_group(self, group_id, user_id):
+        """
+        Add a user to a group as a member
+        :param group_id:
+        :param user_id:
+        """
+        url = self.TEAM_MEMBERS_URL % (group_id, user_id)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.post_request()
+
+    def remove_member_from_group(self, group_id, user_id):
+        """
+        Add a user to a group as a member
+        :param group_id:
+        :param user_id:
+        """
+        url = self.TEAM_MEMBERS_URL % (group_id, user_id)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.delete_request()
+
+    def add_manager_to_group(self, group_id, user_id):
+        """
+        Add a user to a group as a member
+        :param group_id:
+        :param user_id:
+        """
+        url = self.TEAM_MANAGERS_URL % (group_id, user_id)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.post_request()
+
+    def remove_manager_from_group(self, group_id, user_id):
+        """
+        Add a user to a group as a member
+        :param group_id:
+        :param user_id:
+        """
+        url = self.TEAM_MANAGERS_URL % (group_id, user_id)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.delete_request()
+
+    def get_subscriptions(self, limit=100, offset=0, params={}):
+        """
+        Get all subscriptions
+        """
+        url = self.SUBSCRIPTIONS_URL + "?limit=%s&offset=%s" % (limit, offset)
+
+        for key, value in params.items():
+            if key is 'ids':
+                value = ",".join(value)
+
+            url += '&%s=%s' % (key, value)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def count_subscriptions(self, params={}):
+        """
+        Count all subscriptions
+        """
+        url = self.SUBSCRIPTIONS_COUNT_URL + '?'
+
+        for key, value in params.items():
+            if key is 'ids':
+                value = ",".join(value)
+
+            url += '&%s=%s' % (key, value)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_subscription(self, subscription_id):
+        """
+        Get single subscription
+        """
+        url = self.SUBSCRIPTIONS_ID_URL % subscription_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def create_subscription(self, url, events):
+        """
+        Create subscription
+        :param events: Events to subscribe
+        :param url: Url to send events
+        """
+        params = {
+            'url': url,
+            'events': events
+        }
+
+        url = self.SUBSCRIPTIONS_URL
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+        connection.add_header('Content-Type', 'application/json')
+        connection.add_params(params, json_format=True)
+
+        return connection.post_request()
+
+    def update_subscription(self, subscription_id, url=None, events=None):
+        """
+        Create subscription
+        :param subscription_id: Subscription to update
+        :param events: Events to subscribe
+        :param url: Url to send events
+        """
+        params = {}
+
+        if url is not None:
+            params['url'] = url
+
+        if events is not None:
+            params['events'] = events
+
+        url = self.SUBSCRIPTIONS_ID_URL % subscription_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+        connection.add_header('Content-Type', 'application/json')
+        connection.add_params(params)
+
+        return connection.patch_request()
+
+    def delete_subscription(self, subscription_id):
+        """
+        Delete single subscription
+        """
+        url = self.SUBSCRIPTIONS_ID_URL % subscription_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.delete_request()
+
+    def get_contacts(self, limit=100, offset=0, params={}):
+        """
+        Get all account contacts
+        """
+        url = self.CONTACTS_URL + "?limit=%s&offset=%s" % (limit, offset)
+
+        for key, value in params.items():
+            if key is 'ids':
+                value = ",".join(value)
+
+            url += '&%s=%s' % (key, value)
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def get_contact(self, contact_id):
+        """
+        Get single contact
+        """
+        url = self.CONTACTS_ID_URL % contact_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.get_request()
+
+    def create_contact(self, email, name):
+        """
+        Create a new contact
+        :param email: user email
+        :param name: user name
+        """
+        params = {'email': email, 'name': name}
+
+        url = self.CONTACTS_URL
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+        connection.add_header('Content-Type', 'application/json')
+        connection.add_params(params, json_format=True)
+
+        return connection.post_request()
+
+    def update_contact(self, contact_id, email=None, name=None):
+        """
+        Update a current contact
+        :param contact_id: contact id
+        :param email: user email
+        :param name: user name
+        """
+        params = {}
+
+        if email is not None:
+            params['email'] = email
+
+        if name is not None:
+            params['name'] = name
+
+        url = self.CONTACTS_ID_URL % contact_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+        connection.add_params(params)
+
+        return connection.patch_request()
+
+    def delete_contact(self, contact_id):
+        """
+        Delete single contact
+        """
+        url = self.CONTACTS_ID_URL % contact_id
+
+        connection = Connection(self.token)
+        connection.set_url(self.production, url)
+
+        return connection.delete_request()
