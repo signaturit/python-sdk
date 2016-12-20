@@ -1,7 +1,6 @@
 from signaturit_sdk.resources.connection import Connection
 from signaturit_sdk.resources.parser import Parser
 
-
 class SignaturitClient:
     BRANDINGS_URL = '/v3/brandings.json'
     BRANDINGS_ID_URL = '/v3/brandings/%s.json'
@@ -161,6 +160,8 @@ class SignaturitClient:
         parser.fill_array(parameters, params, '')
 
         documents = {}
+
+        files = files if isinstance(files, list) else [files]
 
         parser.fill_array(documents, files, 'files')
 
@@ -373,7 +374,7 @@ class SignaturitClient:
 
         return connection.post_request()
 
-    def count_sms(self, conditions={}):
+    def count_SMS(self, conditions={}):
         """
         Count all certified sms
         """
@@ -391,7 +392,7 @@ class SignaturitClient:
 
         return connection.get_request()
 
-    def get_sms(self, limit=100, offset=0, conditions={}):
+    def get_SMS(self, limit=100, offset=0, conditions={}):
         """
         Get all certified sms
         """
@@ -408,7 +409,7 @@ class SignaturitClient:
 
         return connection.get_request()
 
-    def get_single_sms(self, sms_id):
+    def get_single_SMS(self, sms_id):
         """
         Get a specific sms
         """
@@ -418,7 +419,7 @@ class SignaturitClient:
 
         return connection.get_request()
 
-    def download_sms_audit_trail(self, sms_id, certificate_id):
+    def download_SMS_audit_trail(self, sms_id, certificate_id):
         connection = Connection(self.token)
 
         connection.set_url(self.production, self.SMS_AUDIT_TRAIL % (sms_id, certificate_id))
@@ -430,7 +431,7 @@ class SignaturitClient:
 
         return response
 
-    def create_sms(self, files, recipients, body, params={}):
+    def create_SMS(self, files, recipients, body, params={}):
         """
         Create a new certified sms
 
@@ -585,7 +586,7 @@ class SignaturitClient:
 
         return connection.post_request()
 
-    def create_sms_package(self, sheet, files, params={}):
+    def create_SMS_package(self, sheet, files, params={}):
         """
             Create a new sms package
 
