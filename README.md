@@ -345,56 +345,6 @@ Get the audit trail document of an sms request
 response = client.download_sms_audit_trail('SMS_ID','CERTIFICATE_ID')
 ```
 
-##Packages
-
-### Get packages
-
-####Get all packages
-
-```python
-response = client.get_packages()
-```
-
-####Get last 50 packages
-
-```python
-response = client.get_packages(50)
-```
-
-####Navigate through all packages in blocks of 50 results
-
-```python
-response = client.get_packages(50, 50)
-```
-
-### Get single package
-
-Get a single package
-
-```python
-client.get_package('PACKAGE_ID')
-```
-
-### Create email package
-
-Create a new package of certified emails
-
-```python
-response = client.create_email_package(
-    'files/users.csv',
-    ['files/document.pdf'],
-    {'subject': 'bulk request'}
-)
-```
-
-### Get audit trail document
-
-Get the audit trail document of an bulk request
-
-```python
-response = client.download_package_audit_trail('PACKAGE_ID')
-```
-
 ##Team
 
 ### Get users
