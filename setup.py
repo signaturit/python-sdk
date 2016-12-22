@@ -11,5 +11,5 @@ setup(
     name = 'signaturit_sdk',
     packages = ['signaturit_sdk', 'signaturit_sdk.tests', 'signaturit_sdk.resources'],
     url = 'https://github.com/signaturit/python-sdk',
-    version = '1.0.0'
+    version = '1.1.0'
 )

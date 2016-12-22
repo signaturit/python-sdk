@@ -1,5 +1,7 @@
 CHANGELOG
 =========
+* 1.1.0 (2016-12-22)
+ * Added methods for subscriptions, certified sms, users and contacts
 
 * 1.0.0 (2016-01-20)
  * updated all methods to use api v3
