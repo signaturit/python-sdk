@@ -856,6 +856,7 @@ class SignaturitClient:
 
         connection = Connection(self.token)
         connection.set_url(self.production, url)
+        connection.add_header('Content-Type', 'application/json')
         connection.add_params(params)
 
         return connection.patch_request()
