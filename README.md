@@ -80,19 +80,15 @@ response = client.get_signatures(conditions={'crm_id': 'CUSTOM_ID'})
 
 ```python
 response = client.get_signatures(conditions={'ids': ['ID1', 'ID2]})
-``
+```
 
-### Count signature requests
-
-Count your signature requests.
+##### Count signature requests
 
 ```python
 response = client.count_signatures()
 ```
 
-### Get signature request
-
-Get a single signature request.
+##### Get a signature request
 
 ```python
 response = client.get_signature('SIGNATURE_ID')
@@ -145,23 +141,19 @@ file_path = '/documents/contracts/125932_important.pdf'
 response = client.create_signature(file_path, recipients, sign_params)
 ```
 
-### Cancel signature request
-
-Cancel a signature request.
+##### Cancel signature request
 
 ```python
 response = client.cancel_signature('SIGNATURE_ID');
 ```
 
-### Send reminder
-
-Send a reminder email.
+##### Send reminder email
 
 ```python
 response = client.send_signature_reminder('SIGNATURE_ID');
 ```
 
-### Get audit trail
+##### Get audit trail
 
 Get the audit trail of a signature request document
 
@@ -169,7 +161,7 @@ Get the audit trail of a signature request document
 response = client.download_audit_trail('SIGNATURE_ID','DOCUMENT_ID')
 ```
 
-### Get signed document
+##### Get signed document
 
 Get the signed document of a signature request document
 
@@ -179,7 +171,7 @@ response = client.download_signed_document('SIGNATURE_ID','DOCUMENT_ID')
 
 ## Branding
 
-### Get brandings
+#### Get brandings
 
 Get all account brandings.
 
@@ -187,17 +179,17 @@ Get all account brandings.
 response = client.get_brandings()
 ```
 
-### Get branding
+#### Get a single branding
 
-Get a single branding.
+Get a single account branding.
 
 ```python
 response = client.get_branding('BRANDING_ID')
 ```
 
-### Create branding
+#### Create branding
 
-Create a new branding. You can check all branding [params](https://docs.signaturit.com/api/v3#set_branding).`
+Create a new account branding. You can check all branding [params](https://docs.signaturit.com/api/v3#set_branding).`
 
 ```python
 branding_params = {'layout_color': '#FFBF00',
@@ -207,48 +199,48 @@ branding_params = {'layout_color': '#FFBF00',
 response = client.create_branding(branding_params)
 ```
 
-### Update branding
+#### Update a single branding
 
-Update a single branding.
+Update a single account branding
 
 ```python
 branding_params = {'application_texts': {'send_button': 'Send!'}}
 response = client.update_branding('BRANDING_ID', branding_params)
 ```
 
-##Templates
+## Templates
 
-### Get templates
+#### Get templates
 
-Retrieve all data from your templates.
+Retrieve all data from an accounts templates.
 
 ```python
 response = client.get_templates()
 ```
 
-##Emails
+## Emails
 
-### Get emails
+#### Get emails
 
-####Get all certified emails
+Get all certified emails
 
 ```python
 response = client.get_emails()
 ```
 
-####Get last 50 emails
+#### Get last 50 emails
 
 ```python
 response = client.get_emails(50)
 ```
 
-####Navigate through all emails in blocks of 50 results
+#### Navigate through all emails in blocks of 50 results
 
 ```python
 response = client.get_emails(50, 50)
 ```
 
-### Count emails
+#### Count emails
 
 Count all certified emails
 
@@ -256,7 +248,7 @@ Count all certified emails
 response = client.count_emails()
 ```
 
-### Get email
+#### Get email
 
 Get a single email
 
@@ -264,7 +256,7 @@ Get a single email
 client.get_email('EMAIL_ID')
 ```
 
-### Create email
+#### Create email
 
 Create a new certified emails.
 
@@ -278,7 +270,7 @@ response = client.create_email(
 )
 ```
 
-### Get audit trail document
+#### Get audit trail document
 
 Get the audit trail document of an email request
 
@@ -286,47 +278,41 @@ Get the audit trail document of an email request
 response = client.download_email_audit_trail('EMAIL_ID','CERTIFICATE_ID')
 ```
 
-##SMS
+## SMS
 
 ### Get sms
 
-####Get all certified sms
+#### Get all certified sms
 
 ```python
 response = client.get_sms()
 ```
 
-####Get last 50 sms
+#### Get last 50 sms
 
 ```python
 response = client.get_sms(50)
 ```
 
-####Navigate through all sms in blocks of 50 results
+#### Navigate through all sms in blocks of 50 results
 
 ```python
 response = client.get_sms(50, 50)
 ```
 
-### Count emails
-
-Count all certified sms
+#### Count all sms
 
 ```python
 response = client.count_sms()
 ```
 
-### Get single sms
-
-Get a single sms
+#### Get single sms
 
 ```python
 client.get_single_sms('SMS_ID')
 ```
 
-### Create email
-
-Create a new certified sms.
+#### Create a new certified sms.
 
 ```python
 response = client.create_sms(
@@ -337,7 +323,7 @@ response = client.create_sms(
 )
 ```
 
-### Get audit trail document
+#### Get audit trail document
 
 Get the audit trail document of an sms request
 
@@ -345,87 +331,87 @@ Get the audit trail document of an sms request
 response = client.download_sms_audit_trail('SMS_ID','CERTIFICATE_ID')
 ```
 
-##Team
+## Team
 
-### Get users
+#### Get users
 
 ```python
 response = client.get_users()
 ```
 
-### Get user
+#### Get user
 
 ```python
 response = client.get_user(USER_ID)
 ```
 
-### Invite user to your team
+#### Invite user to your team
 
 ```python
 response = client.invite_user('bob.soap@signaturit.com', 'admin')
 ```
 
-### Change user role
+#### Change user role
 
 ```python
 response = client.change_role(USER_ID, 'member')
 ```
 
-### Delete a user from your team
+#### Delete a user from your team
 
 ```python
 response = client.remove_user(USER_ID)
 ```
 
-### Get groups
+#### Get groups
 
 ```python
 response = client.get_groups()
 ```
 
-### Get group
+#### Get group
 
 ```python
 response = client.get_group(GROUP_ID)
 ```
 
-### Create group
+#### Create group
 
 ```python
 response = client.crate_group('SDK group')
 ```
 
-### Update group
+#### Update group
 
 ```python
 response = client.update_group(GROUP_ID, 'SDK updated group')
 ```
 
-### Delete a group from your team
+#### Delete a group from your team
 
 ```python
 response = client.delete_group(GROUP_ID)
 ```
 
-### Add user to a group as a manager
+#### Add user to a group as a manager
 
 ```python
 response = client.add_manager_to_group(GROUP_ID, USER_ID)
 ```
 
-### Add user to a group as a member
+#### Add user to a group as a member
 
 ```python
 response = client.add_member_to_group(GROUP_ID, USER_ID)
 ```
 
-### Remove user from group managers
+#### Remove user from group managers
 
 ```python
 response = client.remove_manager_from_group(GROUP_ID, USER_ID)
 ```
 
-### Remove user from group members
+#### Remove user from group members
 
 ```python
 response = client.remove_members_from_group(GROUP_ID, USER_ID)
@@ -433,62 +419,62 @@ response = client.remove_members_from_group(GROUP_ID, USER_ID)
 
 ## Subscriptions
 
-### Get subscriptions
+#### Get subscriptions
 
 ```python
 response = client.get_subscriptions()
 ```
 
-### Get subscription
+#### Get subscription
 
 ```python
 response = client.get_subscription(SUBSCRIPTION_ID)
 ```
 
-### Create subscription
+#### Create subscription
 
 ```python
 response = client.create_subscription('https://example_url.json', ['email_delivered'])
 ```
 
-### Update subscription
+#### Update subscription
 
 ```python
 response = client.update_subscription(subscription_id=SUBSCRIPTION_ID, url='https://new_example_url.json')
 ```
 
-### Delete subscription
+#### Delete subscription
 ```python
 response = client.delete_subscription(SUBSCRIPTION_ID)
 ```
 
 ## Contacts
 
-### Get contacts
+#### Get contacts
 
 ```python
 response = client.get_contacts()
 ```
 
-### Get contact
+#### Get contact
 
 ```python
 response = client.get_contact(CONTACT_ID)
 ```
 
-### Create contact
+#### Create contact
 
 ```python
 response = client.create_contact('bob.soap@signaturit.com', 'bob')
 ```
 
-### Update contact
+#### Update contact
 
 ```python
 response = client.update_contact(contact_id=CONTACT_ID, name='Bob')
 ```
 
-### Delete contact
+#### Delete contact
 ```python
 response = client.delete_contact(CONTACT_ID)
 ```
