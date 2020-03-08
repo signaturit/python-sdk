@@ -5,7 +5,7 @@ setup(
     author='Signaturit',
     author_email='api@signaturit.com',
     description="Signaturit Python SDK",
-    install_requires=['requests', 'httpretty'],
+    install_requires=['requests', 'httpretty', 'coverage'],
     keywords="signaturit e-signature python sdk",
     license='MIT',
     name='signaturit_sdk',

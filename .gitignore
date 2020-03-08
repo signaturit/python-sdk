@@ -1,4 +1,7 @@
 .DS_Store
 .idea
-dist
+.coverage
+.scannerwork
 *.pyc
+dist
+coverage.xml
